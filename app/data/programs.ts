@@ -82,5 +82,6 @@ export const programs: Program[] = [
     summary: "Perbarui data peserta pada program Advokat Medis 2.",
     detail: "Lengkapi pendataan ulang untuk membantu menjaga keakuratan informasi peserta program Advokat Medis 2.",
     audience: "Peserta atau alumni Advokat Medis 2.",
+    url: "https://forms.gle/5Yc2uyLB6BAPEahr5",
   },
 ];
