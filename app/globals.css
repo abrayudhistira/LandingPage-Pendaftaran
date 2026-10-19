@@ -228,6 +228,12 @@ h3 { margin-bottom: 13px; font-size: 24px; line-height: 1.06; }
 .admin-auth-card form { display: grid; gap: 16px; }
 .admin-auth-card label { display: grid; gap: 7px; color: var(--text-soft); font-size: 12px; font-weight: 700; }
 .admin-auth-card input { border: 1px solid var(--border); border-radius: 10px; padding: 12px; background: var(--bg); color: var(--text); font: inherit; }
+.password-field { position: relative; display: flex; align-items: center; }
+.password-field input { padding-right: 42px; }
+.password-toggle { position: absolute; right: 10px; display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 0; border-radius: 6px; background: transparent; color: var(--text-soft); cursor: pointer; transition: color .2s, background .2s; }
+.password-toggle:hover { color: var(--accent); }
+.password-toggle:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.form-error { margin: 0; color: var(--accent); font-size: 12px; }
 .back-link { display: block; margin-top: 22px; color: var(--text-soft); font-size: 12px; text-align: center; }
 
 .toast-container { position: fixed; top: 24px; right: 24px; display: flex; flex-direction: column; gap: 12px; z-index: 50; pointer-events: none; }
