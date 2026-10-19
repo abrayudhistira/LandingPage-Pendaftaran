@@ -18,7 +18,6 @@ export const programs: Program[] = [
     summary: "Perkuat kesiapan dan kemahiran dalam menangani perkara perdata.",
     detail: "Program pembelajaran untuk peserta yang ingin mengembangkan kompetensi praktis dalam menangani perkara perdata secara lebih terstruktur.",
     audience: "Praktisi hukum dan peserta yang ingin memperdalam perkara perdata.",
-    url: "https://bit.ly/PERDATAMahir1",
   },
   {
     slug: "advokat-pajak",
@@ -27,7 +26,6 @@ export const programs: Program[] = [
     summary: "Bangun pemahaman dan kesiapan praktik pada bidang hukum pajak.",
     detail: "Ruang belajar bagi calon dan praktisi hukum yang ingin mengembangkan fokus keahlian pada isu hukum perpajakan.",
     audience: "Advokat, calon advokat, dan praktisi yang fokus pada pajak.",
-    url: "https://bit.ly/ADVPajak1",
   },
   {
     slug: "likuidator-mahir",
@@ -36,7 +34,6 @@ export const programs: Program[] = [
     summary: "Kenali kompetensi yang diperlukan untuk menjalankan peran likuidator.",
     detail: "Program pengembangan kompetensi untuk peserta yang ingin memahami proses dan tanggung jawab dalam pelaksanaan likuidasi.",
     audience: "Praktisi hukum dan profesional yang menekuni likuidasi.",
-    url: "https://bit.ly/LIKUIDATORMahir1",
   },
   {
     slug: "omnibuslaw",
@@ -45,7 +42,6 @@ export const programs: Program[] = [
     summary: "Pelajari perkembangan dan implikasi hukum dari omnibus law.",
     detail: "Program untuk memperbarui perspektif dan pemahaman terhadap perubahan regulasi serta dampaknya bagi praktik hukum.",
     audience: "Praktisi, akademisi, dan peserta yang mengikuti perkembangan regulasi.",
-    url: "https://bit.ly/OMNIBUSLAW1",
   },
   {
     slug: "advokat-medis-3",
@@ -54,7 +50,6 @@ export const programs: Program[] = [
     summary: "Perluas wawasan pada isu hukum dan praktik advokasi medis.",
     detail: "Program lanjutan bagi peserta yang ingin memahami dinamika pendampingan dan advokasi pada bidang medis.",
     audience: "Praktisi hukum dan peserta yang tertarik pada hukum kesehatan.",
-    url: "https://bit.ly/ADVMEDIS3",
   },
   {
     slug: "pkpa-1",
@@ -87,6 +82,5 @@ export const programs: Program[] = [
     summary: "Perbarui data peserta pada program Advokat Medis 2.",
     detail: "Lengkapi pendataan ulang untuk membantu menjaga keakuratan informasi peserta program Advokat Medis 2.",
     audience: "Peserta atau alumni Advokat Medis 2.",
-    url: "https://bit.ly/ADVMEDIS2",
   },
 ];

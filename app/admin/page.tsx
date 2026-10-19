@@ -6,7 +6,7 @@ import { getSessionCookieName, isValidSessionToken } from "@/lib/admin-auth";
 import AdminDashboard from "./admin-dashboard";
 
 function AdminLoading() {
-  return <main className="admin-page admin-loading"><div className="admin-loading-card"><span className="eyebrow">Ambarsan · Admin</span><h1>Menyiapkan workspace.</h1><p>Memeriksa akses admin...</p></div></main>;
+  return <main className="admin-page admin-loading"><div className="admin-loading-card"><span className="eyebrow">Akademi Professional Legal · Admin</span><h1>Menyiapkan workspace.</h1><p>Memeriksa akses admin...</p></div></main>;
 }
 
 async function AuthenticatedAdmin() {

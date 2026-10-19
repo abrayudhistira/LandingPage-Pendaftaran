@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { programs as defaultPrograms, type Program, type ProgramCategory } from "./data/programs";
 
@@ -66,10 +67,10 @@ function HomeContent({ programs }: { programs: Program[] }) {
     <main>
       <header className="site-header">
         <a className="brand" href="#beranda" aria-label="Ambarsan, kembali ke beranda">
-          <span className="brand-mark">A</span>
+          <Image className="brand-icon" src="/app-icon.png" alt="" width={40} height={40} priority />
           <span>
-            <strong>ambarsan</strong>
-            <small>legal education &amp; advocacy</small>
+            <strong>Akademi Professional Legal</strong>
+            <small>pendidikan &amp; advokasi hukum</small>
           </span>
         </a>
         <nav className="desktop-nav" aria-label="Navigasi utama">
@@ -98,7 +99,7 @@ function HomeContent({ programs }: { programs: Program[] }) {
           <div className="art-ring art-ring-one" />
           <div className="art-ring art-ring-two" />
           <div className="art-cross">✦</div>
-          <div className="art-panel"><span>AMB</span><small>EST. 2012</small></div>
+          <div className="art-panel"><Image src="/app-icon.png" alt="" width={92} height={92} /><small>PROFESSIONAL LEGAL</small></div>
           <div className="art-caption">Keadilan<br />dengan keahlian.</div>
         </div>
       </section>
@@ -160,7 +161,7 @@ function HomeContent({ programs }: { programs: Program[] }) {
         <div className="faq-list"><details><summary>Apa perbedaan pendaftaran baru dan pendataan ulang?</summary><p>Pendaftaran baru ditujukan bagi calon peserta, sedangkan pendataan ulang ditujukan bagi peserta atau alumni yang perlu memperbarui informasi.</p></details><details><summary>Ke mana saya diarahkan setelah menekan tombol?</summary><p>Anda akan diarahkan ke formulir eksternal resmi melalui tautan Bitly yang sesuai dengan program pilihan Anda.</p></details><details><summary>Apa yang perlu disiapkan sebelum mengisi formulir?</summary><p>Siapkan informasi identitas dan data pendukung yang relevan. Pastikan seluruh data sudah benar sebelum dikirim.</p></details></div>
       </section>
 
-      <footer className="site-footer shell"><div className="brand footer-brand"><span className="brand-mark">A</span><span><strong>ambarsan</strong><small>legal education &amp; advocacy</small></span></div><p>Informasi pendaftaran dan pendataan program Ambarsan.</p><small>© 2026 Ambarsan. Tautan formulir mengarah ke layanan eksternal.</small></footer>
+      <footer className="site-footer shell"><div className="brand footer-brand"><Image className="brand-icon" src="/app-icon.png" alt="" width={40} height={40} /><span><strong>Akademi Professional Legal</strong><small>pendidikan &amp; advokasi hukum</small></span></div><p>Informasi pendaftaran dan pendataan program Akademi Professional Legal.</p><small>© 2026 Akademi Professional Legal. Tautan formulir mengarah ke layanan eksternal.</small></footer>
     </main>
   );
 }

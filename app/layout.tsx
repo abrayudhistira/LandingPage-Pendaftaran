@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ambarsan | Pendaftaran & Pendataan",
-  description: "Temukan program pendaftaran dan pendataan Ambarsan melalui tautan formulir resmi.",
+  title: "Akademi Professional Legal | Pendaftaran & Pendataan",
+  description: "Temukan program pendaftaran dan pendataan Akademi Professional Legal melalui tautan formulir resmi.",
+  icons: { icon: "/app-icon.png" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
