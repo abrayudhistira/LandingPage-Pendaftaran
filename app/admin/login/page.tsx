@@ -45,12 +45,12 @@ export default function AdminLogin() {
 			<div className="admin-auth-brand">
 				<Link className="brand" href="/">
 					<Image className="brand-icon" src="/app-icon.png" alt="" width={40} height={40} priority />
-					<span><strong>Akademi Professional Legal</strong><small>pendidikan &amp; advokasi hukum</small></span>
+					<span><strong>Akademi Profesional Legal</strong><small>pendidikan &amp; advokasi hukum</small></span>
 				</Link>
-				<p>Ruang kerja yang tenang untuk menjaga data tetap tertata.</p>
+				<p>Hendaklah keadilan ditegakkan walaupun langit runtuh.</p>
 			</div>
 			<div className="admin-auth-card">
-				<p className="eyebrow">Ambarsan · Admin</p>
+				<p className="eyebrow">Fiat Justitia Ruat Caelum</p>
 				<h1>Selamat datang kembali.</h1>
 				<p className="auth-copy">Masuk untuk mengelola pendataan dan pendaftaran ulang.</p>
 				<form onSubmit={submit}>

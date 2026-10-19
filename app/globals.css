@@ -243,7 +243,12 @@ h3 { margin-bottom: 13px; font-size: 24px; line-height: 1.06; }
 .toast-error { border-color: color-mix(in srgb, var(--accent) 60%, var(--border)); background: color-mix(in srgb, var(--accent) 4%, var(--surface)); }
 .toast-error .toast-text { color: var(--accent); }
 .toast-icon { display: flex; align-items: center; color: var(--gold); }
-.toast-progress { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--gold); border-radius: 0 0 14px 14px; transition: width 0.1s linear; }
+.toast-progress { position: absolute; bottom: 0; right: 0; height: 3px; background: var(--gold); border-radius: 0 0 14px 14px; width: 100%; animation: countdown 3s linear forwards; }
+
+@keyframes countdown {
+  from { width: 100%; }
+  to { width: 0; }
+}
 
 @media (max-width: 800px) {
 	.toast-container { top: 16px; right: 16px; }

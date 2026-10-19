@@ -27,13 +27,15 @@ function ThemeIcon({ theme }: { theme: "light" | "dark" }) {
 	);
 }
 
-export default function PageContent({ programs }: { programs: Program[] }) {
+export default function PageContent({ programs, initialTheme }: { programs: Program[]; initialTheme: "light" | "dark" | null }) {
 	const [activeCategory, setActiveCategory] = useState<ProgramCategory>("Pendaftaran Baru");
 	const [selectedSlug, setSelectedSlug] = useState("perdata-mahir");
 	const [theme, setTheme] = useState<"light" | "dark">(() => {
+		if (initialTheme) return initialTheme;
 		if (typeof window === "undefined") return "light";
 		const storedTheme = window.localStorage.getItem("ambarsan-theme");
-		return storedTheme === "dark" || (!storedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+		if (storedTheme === "light" || storedTheme === "dark") return storedTheme;
+		return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 	});
 
 	const visiblePrograms = useMemo(
@@ -46,11 +48,19 @@ export default function PageContent({ programs }: { programs: Program[] }) {
 		document.documentElement.dataset.theme = theme;
 	}, [theme]);
 
+	useEffect(() => {
+		if (document.documentElement.dataset.theme !== theme) {
+			document.documentElement.dataset.theme = theme;
+		}
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
+
 	function changeTheme() {
 		const nextTheme = theme === "light" ? "dark" : "light";
 		setTheme(nextTheme);
 		document.documentElement.dataset.theme = nextTheme;
 		window.localStorage.setItem("ambarsan-theme", nextTheme);
+		// Persist theme to cookie so the server can read it on next visit
+		document.cookie = `ambarsan-theme=${nextTheme}; path=/; max-age=31536000`;
 	}
 
 	function selectCategory(category: ProgramCategory) {
@@ -62,10 +72,10 @@ export default function PageContent({ programs }: { programs: Program[] }) {
 	return (
 		<main>
 			<header className="site-header">
-				<a className="brand" href="#beranda" aria-label="Akademi Professional Legal, kembali ke beranda">
+				<a className="brand" href="#beranda" aria-label="Akademi Profesional Legal, kembali ke beranda">
 					<Image className="brand-icon" src="/app-icon.png" alt="" width={40} height={40} priority />
 					<span>
-						<strong>Akademi Professional Legal</strong>
+						<strong>Akademi Profesional Legal</strong>
 						<small>pendidikan &amp; advokasi hukum</small>
 					</span>
 				</a>
@@ -95,7 +105,7 @@ export default function PageContent({ programs }: { programs: Program[] }) {
 					<div className="art-ring art-ring-one" />
 					<div className="art-ring art-ring-two" />
 					<div className="art-cross">✦</div>
-					<div className="art-panel"><Image src="/app-icon.png" alt="" width={92} height={92} /><small>PROFESSIONAL LEGAL</small></div>
+					<div className="art-panel"><Image src="/app-icon.png" alt="" width={92} height={92} /><small>PROFESIONAL LEGAL</small></div>
 					<div className="art-caption">Keadilan<br />dengan keahlian.</div>
 				</div>
 			</section>
@@ -157,7 +167,7 @@ export default function PageContent({ programs }: { programs: Program[] }) {
 				<div className="faq-list"><details><summary>Apa perbedaan pendaftaran baru dan pendataan ulang?</summary><p>Pendaftaran baru ditujukan bagi calon peserta, sedangkan pendataan ulang ditujukan bagi peserta atau alumni yang perlu memperbarui informasi.</p></details><details><summary>Ke mana saya diarahkan setelah menekan tombol?</summary><p>Anda akan diarahkan ke formulir eksternal resmi melalui tautan yang sesuai dengan program pilihan Anda.</p></details><details><summary>Apa yang perlu disiapkan sebelum mengisi formulir?</summary><p>Siapkan informasi identitas dan data pendukung yang relevan. Pastikan seluruh data sudah benar sebelum dikirim.</p></details></div>
 			</section>
 
-			<footer className="site-footer shell"><div className="brand footer-brand"><Image className="brand-icon" src="/app-icon.png" alt="" width={40} height={40} /><span><strong>Akademi Professional Legal</strong><small>pendidikan &amp; advokasi hukum</small></span></div><p>Informasi pendaftaran dan pendataan program Akademi Professional Legal.</p><small>© 2026 Akademi Professional Legal.</small></footer>
+			<footer className="site-footer shell"><div className="brand footer-brand"><Image className="brand-icon" src="/app-icon.png" alt="" width={40} height={40} /><span><strong>Akademi Profesional Legal</strong><small>pendidikan &amp; advokasi hukum</small></span></div><p>Informasi pendaftaran dan pendataan program Akademi Profesional Legal.</p><small>© 2026 Akademi Profesional Legal.</small></footer>
 		</main>
 	);
 }

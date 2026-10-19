@@ -109,7 +109,7 @@ export default function AdminDashboard() {
 			<header className="admin-header shell">
 				<Link className="brand" href="/">
 					<Image className="brand-icon" src="/app-icon.png" alt="" width={40} height={40} priority />
-					<span><strong>Akademi Professional Legal</strong><small>content workspace</small></span>
+					<span><strong>Akademi Professional Legal</strong><small>PENDIDIKAN & ADVOKASI HUKUM</small></span>
 				</Link>
 				<button className="text-link" onClick={logout}>Keluar</button>
 			</header>
@@ -183,31 +183,16 @@ export default function AdminDashboard() {
 }
 
 function ToastItem({ toast, onExpire }: { toast: Toast; onExpire: () => void }) {
-	const [progress, setProgress] = useState(100);
-
 	useEffect(() => {
-		let start: number | null = null;
-		const duration = 3000;
-		const step = (timestamp: number) => {
-			if (start === null) start = timestamp;
-			const elapsed = timestamp - start;
-			const percent = Math.max(0, 100 - (elapsed / duration) * 100);
-			setProgress(percent);
-			if (elapsed < duration) {
-				window.requestAnimationFrame(step);
-			} else {
-				onExpire();
-			}
-		};
-		window.requestAnimationFrame(step);
-		return () => { start = null; };
+		const timer = window.setTimeout(onExpire, 3000);
+		return () => window.clearTimeout(timer);
 	}, [onExpire]);
 
 	return (
 		<div className={`toast toast-${toast.type}`}>
 			<span className="toast-icon">{toast.type === "success" ? <CheckIcon /> : <WarningIcon />}</span>
 			<span className="toast-text">{toast.message}</span>
-			<span className="toast-progress" style={{ width: `${progress}%` }} />
+			<span className="toast-progress" />
 		</div>
 	);
 }
