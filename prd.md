@@ -128,17 +128,55 @@ Produk ini **bukan** aplikasi pengisian formulir internal. Seluruh pengumpulan d
 ## 11. Di Luar Scope MVP
 
 - Formulir internal.
-- Dashboard admin.
-- Autentikasi pengguna.
 - Pembayaran online.
-- Integrasi database peserta.
 - Pelacakan data pribadi pengunjung.
 
-## 12. Pertanyaan Terbuka
+## 12. Cakupan pengembangan lanjutan — MySQL
 
-1. Apa link Bitly untuk PKPA 1?
-2. Apa link Bitly untuk pendataan ulang Kepailitan?
-3. Apa link Bitly untuk pendataan ulang Mediator?
+Produk dikembangkan agar data master terpusat di MySQL dan tetap konsisten antar environment.
+
+- **Database MySQL:**
+  - Host, database, user, dan password disimpan pada env `DATABASE_URL` / variabel terpisah.
+  - Migrasi skema pertama kali dijalankan secara manual/dev, tidak otomatis di build.
+  - Koneksi menggunakan connection pool; tidak membuka/menutup koneksi tiap request.
+  - `lib/mysql.ts` diekspor sebagai server-only module dan tidak boleh masuk ke client bundle.
+
+- **Akun admin:**
+  - Akun admin (`lbhambarsan@gmail.com`) disimpan di tabel `admin_accounts`.
+  - Password tidak pernah disimpan sebagai plaintext; disimpan sebagai hash `scrypt`.
+  - Login membandingkan hash password dan membangkitkan session token berbasis HMAC.
+  - Session token disimpan di HttpOnly cookie (`SameSite=Lax`, `Secure` di produksi).
+
+- **Program & kategori:**
+  - Program dan kategori disimpan di tabel `programs` dan `categories`.
+  - Landing page membaca program langsung dari MySQL secara real-time, sehingga perubahan di dashboard langsung terlihat.
+  - Program dapat memiliki atau tidak memiliki redirect URL.
+  - Validasi kategori dilakukan server-side agar landing page tetap konsisten dengan kategori yang didefinisikan.
+
+- **Dashboard admin:**
+  - Membaca dan menulis ke MySQL untuk program/kategori.
+  - Menampilkan statistik berdasarkan kategori dan jumlah link tersedia.
+
+- **Fallback lokal:**
+  - `app/data/programs.ts` tetap digunakan sebagai fallback seed saat MySQL tidak tersedia (mis. dev lokal/offline).
+  - `data/program-content.json` tidak lagi diperlukan sebagai sumber data utama.
+
+## 13. Pertanyaan Terbuka
+
+1. Apa link Bitly/Google Form untuk PKPA 1?
+2. Apa link Bitly/Google Form untuk pendataan ulang Kepailitan?
+3. Apa link Bitly/Google Form untuk pendataan ulang Mediator?
 4. Apakah nama resmi organisasi, logo, alamat, email, dan nomor kontak perlu ditampilkan?
 5. Apakah detail tiap program memiliki jadwal, biaya, narahubung, atau persyaratan tambahan?
 6. Apakah seluruh detail dibuka sebagai route terpisah atau modal/accordion pada satu halaman?
+
+## 14. Acceptance Criteria — MySQL Integration
+
+- [ ] MySQL tersambung dan dapat mengembalikan daftar program pada env yang dikonfigurasi.
+- [ ] Landing page menampilkan program dari MySQL secara real-time.
+- [ ] Perubahan kategori/program/URL di dashboard langsung terlihat di landing page tanpa rebuild.
+- [ ] Login admin memvalidasi password terhadap hash di MySQL.
+- [ ] Session admin disimpan dalam HttpOnly cookie dan kadaluarsa setelah waktu ditentukan.
+- [ ] Fallback seed lokal bekerja saat MySQL tidak tersedia.
+- [ ] `lib/mysql.ts` dan credential tidak pernah masuk client bundle.
+- [ ] Password admin asli tidak muncul di source, bundle, log, atau dokumen.
