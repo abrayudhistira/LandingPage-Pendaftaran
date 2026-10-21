@@ -8,6 +8,9 @@ export type Program = {
   detail: string;
   audience: string;
   url?: string;
+  benefitEnabled?: boolean;
+  benefitText?: string;
+  benefitImage?: string;
 };
 
 export const programs: Program[] = [

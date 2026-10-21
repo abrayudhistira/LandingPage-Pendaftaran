@@ -63,8 +63,11 @@ export async function listPrograms(): Promise<Program[]> {
 			detail: string;
 			audience: string;
 			url: string | null;
+			benefit_enabled: number | boolean;
+			benefit_text: string | null;
+			benefit_image: string | null;
 		}>(
-			`SELECT slug, category_key, name, summary, detail, audience, url
+			`SELECT slug, category_key, name, summary, detail, audience, url, benefit_enabled, benefit_text, benefit_image
 			 FROM programs
 			 ORDER BY FIELD(category_key, 'pendaftaran-baru', 'pendataan-ulang'), sort_order, name`,
 		);
@@ -76,6 +79,9 @@ export async function listPrograms(): Promise<Program[]> {
 			detail: row.detail,
 			audience: row.audience,
 			url: row.url ?? undefined,
+				benefitEnabled: Boolean(row.benefit_enabled),
+				benefitText: row.benefit_text ?? "",
+				benefitImage: row.benefit_image ?? undefined,
 		}));
 	} catch {
 		return defaultPrograms;
@@ -93,8 +99,11 @@ export async function getProgram(slug: string): Promise<Program | null> {
 			detail: string;
 			audience: string;
 			url: string | null;
+			benefit_enabled: number | boolean;
+			benefit_text: string | null;
+			benefit_image: string | null;
 		}>(
-			"SELECT slug, category_key, name, summary, detail, audience, url FROM programs WHERE slug = ?",
+			"SELECT slug, category_key, name, summary, detail, audience, url, benefit_enabled, benefit_text, benefit_image FROM programs WHERE slug = ?",
 			[slug],
 		);
 		const row = rows[0];
@@ -107,6 +116,9 @@ export async function getProgram(slug: string): Promise<Program | null> {
 			detail: row.detail,
 			audience: row.audience,
 			url: row.url ?? undefined,
+				benefitEnabled: Boolean(row.benefit_enabled),
+				benefitText: row.benefit_text ?? "",
+				benefitImage: row.benefit_image ?? undefined,
 		};
 	} catch {
 		return defaultPrograms.find((p) => p.slug === slug) ?? null;
@@ -119,8 +131,8 @@ export async function createProgram(input: ContentProgram): Promise<Program | nu
 	try {
 		const catKey = CATEGORY_KEYS[input.category];
 		const [result] = await conn.execute<ResultSetHeader & { affectedRows: number }>(
-			`INSERT INTO programs (slug, category_key, name, summary, detail, audience, url)
-			 VALUES (?, ?, ?, ?, ?, ?, ?)`,
+			`INSERT INTO programs (slug, category_key, name, summary, detail, audience, url, benefit_enabled, benefit_text, benefit_image)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 			[
 				input.slug,
 				catKey,
@@ -129,6 +141,9 @@ export async function createProgram(input: ContentProgram): Promise<Program | nu
 				input.detail,
 				input.audience,
 				input.url ?? null,
+				input.benefitEnabled ? 1 : 0,
+				input.benefitText?.trim() || null,
+				input.benefitImage || null,
 			],
 		);
 		if (result.affectedRows === 0) return null;
@@ -172,7 +187,19 @@ export async function updateProgram(slug: string, input: Partial<ContentProgram>
 			fields.push("url = ?");
 			values.push(input.url || null);
 		}
-		if (fields.length === 0) return await getProgram(slug);
+		if (input.benefitEnabled !== undefined) {
+				fields.push("benefit_enabled = ?");
+				values.push(input.benefitEnabled ? 1 : 0);
+			}
+			if (input.benefitText !== undefined) {
+				fields.push("benefit_text = ?");
+				values.push(input.benefitText.trim() || null);
+			}
+			if (input.benefitImage !== undefined) {
+				fields.push("benefit_image = ?");
+				values.push(input.benefitImage || null);
+			}
+			if (fields.length === 0) return await getProgram(slug);
 		values.push(slug);
 		const [result] = await conn.execute<ResultSetHeader & { affectedRows: number }>(
 			`UPDATE programs SET ${fields.join(", ")} WHERE slug = ?`,
@@ -215,7 +242,9 @@ function validateContent(input: Partial<ContentProgram>): boolean {
 		input.audience.trim().length > 0 &&
 		typeof input.category === "string" &&
 		categories.includes(input.category as ProgramCategory) &&
-		(!input.url || (typeof input.url === "string" && URL_REGEX.test(input.url)))
+		(!input.url || (typeof input.url === "string" && URL_REGEX.test(input.url))) &&
+			(input.benefitEnabled !== true || (typeof input.benefitText === "string" && input.benefitText.trim().length > 0)) &&
+			(!input.benefitImage || (typeof input.benefitImage === "string" && /^\/uploads\/[A-Za-z0-9._-]+$/.test(input.benefitImage)))
 	);
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import type { Program, ProgramCategory } from "./data/programs";
 
@@ -133,7 +134,7 @@ export default function PageContent({ programs, initialTheme }: { programs: Prog
 								<h3>{program.name}</h3>
 								<p>{program.summary}</p>
 								<div className="card-footer">
-									<button type="button" className="detail-link" onClick={() => { setSelectedSlug(program.slug); document.getElementById("detail-program")?.scrollIntoView({ behavior: "smooth", block: "center" }); }}>Lihat detail </button>
+									<Link className="detail-link" href={`/${program.slug}`}>Lihat detail <span>↗</span></Link>
 									{/* <span className="card-arrow">↗</span> */}
 								</div>
 							</article>

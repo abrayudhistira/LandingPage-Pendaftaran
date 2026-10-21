@@ -20,6 +20,9 @@ CREATE TABLE IF NOT EXISTS programs (
   detail       TEXT NOT NULL,
   audience     TEXT NOT NULL,
   url          VARCHAR(2083) DEFAULT NULL,
+  benefit_enabled TINYINT(1) NOT NULL DEFAULT 0,
+  benefit_text TEXT DEFAULT NULL,
+  benefit_image VARCHAR(512) DEFAULT NULL,
   sort_order   INT DEFAULT 0,
   created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -39,3 +42,8 @@ CREATE TABLE IF NOT EXISTS admin_accounts (
 -- The plaintext password is intentionally NOT stored in source control.
 INSERT IGNORE INTO admin_accounts (email, password_salt, password_hash) VALUES
   ('lbhambarsan@gmail.com', '296eb483934fe0bda28601caddf84359', 'ef5ceafb71147e417401c48fced3adb76caf6d67402654425dbf3a94c60a4e7e950242bacf1669cbff0e060ca1fca785e841197093e39ccfe09bd1fb4ec55267');
+
+-- Existing installations: add these columns manually if they predate this schema revision.
+-- ALTER TABLE programs ADD COLUMN benefit_enabled TINYINT(1) NOT NULL DEFAULT 0;
+-- ALTER TABLE programs ADD COLUMN benefit_text TEXT DEFAULT NULL;
+-- ALTER TABLE programs ADD COLUMN benefit_image VARCHAR(512) DEFAULT NULL;

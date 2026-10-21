@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Program, ProgramCategory } from "@/app/data/programs";
 
@@ -40,8 +40,17 @@ function WarningIcon() {
 	);
 }
 
+function UploadIcon() {
+	return (
+		<svg aria-hidden="true" viewBox="0 0 24 24" className="upload-icon" fill="none">
+			<path d="M12 16V4m0 0-4 4m4-4 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+			<path d="M20 16.7V18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1.3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+		</svg>
+	);
+}
+
 type ProgramItem = Program;
-const blank: ProgramItem = { slug: "program-baru", name: "", category: "Pendaftaran Baru", summary: "", detail: "", audience: "", url: "" };
+const blank: ProgramItem = { slug: "program-baru", name: "", category: "Pendaftaran Baru", summary: "", detail: "", audience: "", url: "", benefitEnabled: false, benefitText: "", benefitImage: "" };
 const categories: ProgramCategory[] = ["Pendaftaran Baru", "Pendataan Ulang"];
 
 type ToastType = "success" | "error";
@@ -54,6 +63,32 @@ export default function AdminDashboard() {
 	const [editing, setEditing] = useState<string | null>(null);
 	const [category, setCategory] = useState<ProgramCategory>(categories[0]);
 	const [toasts, setToasts] = useState<Toast[]>([]);
+	const [benefitFile, setBenefitFile] = useState<File | null>(null);
+	const [dragging, setDragging] = useState(false);
+	const fileInputRef = useRef<HTMLInputElement>(null);
+
+	const handleFile = useCallback((file: File | null) => {
+		if (!file) return;
+		const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+		if (!allowed.includes(file.type)) {
+			showToast("Format file tidak didukung. Gunakan JPG, PNG, WEBP, atau GIF.", "error");
+			return;
+		}
+		if (file.size > 5 * 1024 * 1024) {
+			showToast("Ukuran file terlalu besar (maks 5MB).", "error");
+			return;
+		}
+		setBenefitFile(file);
+	}, []);
+
+	const onDragOver = useCallback((e: React.DragEvent) => { e.preventDefault(); setDragging(true); }, []);
+	const onDragLeave = useCallback((e: React.DragEvent) => { e.preventDefault(); setDragging(false); }, []);
+	const onDrop = useCallback((e: React.DragEvent) => {
+		e.preventDefault();
+		setDragging(false);
+		const file = e.dataTransfer.files?.[0] ?? null;
+		handleFile(file);
+	}, [handleFile]);
 
 	const showToast = (message: string, type: ToastType = "success") => {
 		const id = Date.now();
@@ -74,16 +109,29 @@ export default function AdminDashboard() {
 	}
 	function edit(item: ProgramItem) {
 		setEditing(item.slug);
-		setForm(item);
+		setBenefitFile(null);
+		setForm({ ...blank, ...item });
 		window.scrollTo({ top: 0, behavior: "smooth" });
 	}
 	async function save(event: React.FormEvent) {
 		event.preventDefault();
 		const isEditing = Boolean(editing);
+		let payload = { ...form };
+		if (benefitFile) {
+			const upload = new FormData();
+			upload.append("file", benefitFile);
+			const uploadResponse = await fetch("/api/admin/upload", { method: "POST", body: upload });
+			if (!uploadResponse.ok) {
+				showToast("Gagal mengunggah foto benefit.", "error");
+				return;
+			}
+			payload = { ...payload, benefitImage: (await uploadResponse.json()).path };
+		}
+		if (!payload.benefitEnabled) payload = { ...payload, benefitText: "", benefitImage: "" };
 		const response = await fetch(isEditing ? `/api/admin/content/${editing}` : "/api/admin/content", {
 			method: isEditing ? "PATCH" : "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(form),
+			body: JSON.stringify(payload),
 		});
 		if (response.ok) {
 			showToast(isEditing ? "Konten diperbarui." : "Program ditambahkan.");
@@ -138,8 +186,34 @@ export default function AdminDashboard() {
 						<label>Deskripsi detail<textarea value={form.detail} onChange={(e) => change("detail", e.target.value)} rows={4} required /></label>
 						<label>Cocok untuk<textarea value={form.audience} onChange={(e) => change("audience", e.target.value)} rows={2} required /></label>
 						<label>Link redirect <span className="field-hint">Kosongkan jika belum tersedia</span><input type="url" value={form.url ?? ""} onChange={(e) => change("url", e.target.value)} placeholder="https://bit.ly/..." /></label>
+							<div className="benefit-card-admin">
+								<button type="button" className={form.benefitEnabled ? "benefit-toggle active" : "benefit-toggle"} onClick={() => setForm((current) => ({ ...current, benefitEnabled: !current.benefitEnabled }))} aria-pressed={Boolean(form.benefitEnabled)}><span className="benefit-toggle-mark" aria-hidden="true">{form.benefitEnabled ? "✓" : ""}</span><span>{form.benefitEnabled ? "Benefit aktif" : "Aktifkan benefit"}</span></button>
+								<label>Isi benefit<textarea value={form.benefitText ?? ""} onChange={(e) => change("benefitText", e.target.value)} rows={3} disabled={!form.benefitEnabled} required={form.benefitEnabled} /></label>
+								<div className={`dropzone${dragging ? " dragover" : ""}${!form.benefitEnabled ? " disabled" : ""}`} onDragOver={form.benefitEnabled ? onDragOver : undefined} onDragLeave={form.benefitEnabled ? onDragLeave : undefined} onDrop={form.benefitEnabled ? onDrop : undefined} onClick={() => form.benefitEnabled && fileInputRef.current?.click()}>
+									<input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={(e) => handleFile(e.target.files?.[0] ?? null)} hidden />
+									<UploadIcon />
+									{benefitFile ? (
+										<>
+											<span className="dropzone-filename">{benefitFile.name}</span>
+											<span className="dropzone-hint">Klik atau lepaskan untuk mengganti</span>
+										</>
+									) : (
+										<>
+											<span className="dropzone-label">Pilih File atau lepaskan disini.</span>
+											<span className="dropzone-hint">JPG, PNG, WEBP, GIF · Maks 5MB</span>
+										</>
+									)}
+								</div>
+								{(benefitFile || form.benefitImage) && (
+									<div className="benefit-preview-wrap">
+										{/* eslint-disable-next-line @next/next/no-img-element */}
+										<img className="benefit-preview" src={benefitFile ? URL.createObjectURL(benefitFile) : form.benefitImage!} alt="Preview benefit" />
+										{benefitFile && <button type="button" className="benefit-preview-clear" onClick={() => { setBenefitFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; }} aria-label="Hapus file">&times;</button>}
+									</div>
+								)}
+							</div>
 						<button className="button button-primary button-wide">{editing ? "Simpan perubahan" : "Tambah program"}</button>
-						{editing && <button type="button" className="button button-secondary button-wide" onClick={() => { setEditing(null); setForm(blank); }}>Batal</button>}
+						{editing && <button type="button" className="button button-secondary button-wide" onClick={() => { setEditing(null); setBenefitFile(null); setForm(blank); }}>Batal</button>}
 					</form>
 					<section className="records-panel">
 						<div className="records-toolbar">
