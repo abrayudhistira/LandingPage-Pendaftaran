@@ -231,6 +231,8 @@ export async function deleteProgram(slug: string): Promise<boolean> {
 const URL_REGEX = /^https?:\/\//i;
 
 function validateContent(input: Partial<ContentProgram>): boolean {
+	const url = input.url?.trim() || "";
+	const benefitImage = input.benefitImage?.trim() || "";
 	return (
 		typeof input.name === "string" &&
 		input.name.trim().length > 0 &&
@@ -242,9 +244,9 @@ function validateContent(input: Partial<ContentProgram>): boolean {
 		input.audience.trim().length > 0 &&
 		typeof input.category === "string" &&
 		categories.includes(input.category as ProgramCategory) &&
-		(!input.url || (typeof input.url === "string" && URL_REGEX.test(input.url))) &&
-			(input.benefitEnabled !== true || (typeof input.benefitText === "string" && input.benefitText.trim().length > 0)) &&
-			(!input.benefitImage || (typeof input.benefitImage === "string" && /^\/uploads\/[A-Za-z0-9._-]+$/.test(input.benefitImage)))
+		(url === "" || URL_REGEX.test(url)) &&
+		(input.benefitEnabled !== true || (typeof input.benefitText === "string" && input.benefitText.trim().length > 0)) &&
+		(benefitImage === "" || /^\/uploads\/[A-Za-z0-9._-]+$/.test(benefitImage))
 	);
 }
 
